@@ -3,5 +3,5 @@
 ## Author: Rajmee
 ## Version: 1.0.0
 ## Notes: Display quest progress on mob nameplates
-## SavedVariables: QuestPlate
-QuestPlate.lua
+## SavedVariables: QuestPlateOcto
+QuestPlateOcto.lua

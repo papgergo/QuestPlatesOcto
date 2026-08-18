@@ -7,7 +7,7 @@ local questObjectives = {}
 local iconPool = {}
 
 -- Saved Settings
-QuestPlateOctoDB = QuestPlateOctoDB or {}
+QuestPlateOcto = QuestPlateOcto or {}
 local defaults = {
     iconSize = 16,
     xOffset = 22,
@@ -16,8 +16,8 @@ local defaults = {
 
 local function ApplyDefaults()
     for k, v in pairs(defaults) do
-        if QuestPlateOctoDB[k] == nil then
-            QuestPlateOctoDB[k] = v
+        if QuestPlateOcto[k] == nil then
+            QuestPlateOcto[k] = v
         end
     end
 end
@@ -320,7 +320,7 @@ end
 local function CreateIconPool()
     for i = 1, MAX_ICONS do
         local iconFrame = CreateFrame("Frame", nil, f)
-        iconFrame:SetSize(QuestPlateOctoDB.iconSize, QuestPlateOctoDB.iconSize)
+        iconFrame:SetSize(QuestPlateOcto.iconSize, QuestPlateOcto.iconSize)
         local texture = iconFrame:CreateTexture(nil, "ARTWORK")
         texture:SetAllPoints(iconFrame)
         iconFrame.texture = texture
@@ -335,7 +335,7 @@ end
 
 local function UpdateIconAppearance()
     for _, icon in pairs(iconPool) do
-        icon:SetSize(QuestPlateOctoDB.iconSize, QuestPlateOctoDB.iconSize)
+        icon:SetSize(QuestPlateOcto.iconSize, QuestPlateOcto.iconSize)
     end
     -- Force a redraw of nameplates
     if updater then
@@ -425,8 +425,8 @@ updater:SetScript("OnUpdate", function()
                             if prevIcon then
                                 icon:SetPoint("RIGHT", prevIcon, "RIGHT", 25, 0)
                             else
-                                icon:SetPoint("RIGHT", healthBar, "RIGHT", QuestPlateOctoDB.xOffset,
-                                    QuestPlateOctoDB.yOffset)
+                                icon:SetPoint("RIGHT", healthBar, "RIGHT", QuestPlateOcto.xOffset,
+                                    QuestPlateOcto.yOffset)
                             end
                             icon.texture:SetTexture(objectiveData.icon)
                             icon.text:SetText(objectiveData.text)
@@ -506,35 +506,35 @@ SlashCmdList["QUESTPLATEOCTO"] = function(msg)
     if command == "scale" or command == "size" then
         local num = tonumber(value)
         if num and num > 4 and num < 64 then
-            QuestPlateOctoDB.iconSize = num
+            QuestPlateOcto.iconSize = num
             print("|cff3399ffQuestPlateOcto|r: Icon size set to |cffffff00" .. num .. "|r.")
             UpdateIconAppearance()
         else
-            num = QuestPlateOctoDB.iconSize
+            num = QuestPlateOcto.iconSize
             print("|cff3399ffQuestPlateOcto|r: Usage: /qp scale <number> (Current: " .. num .. ")")
         end
     elseif command == "x" then
         local num = tonumber(value)
         if num then
-            QuestPlateOctoDB.xOffset = num
+            QuestPlateOcto.xOffset = num
             print("|cff3399ffQuestPlateOcto|r: Icon X-Offset set to |cffffff00" .. num .. "|r.")
         else
-            num = QuestPlateOctoDB.xOffset
+            num = QuestPlateOcto.xOffset
             print("|cff3399ffQuestPlateOcto|r: Usage: /qp x <number> (Current: " .. num .. ")")
         end
     elseif command == "y" then
         local num = tonumber(value)
         if num then
-            QuestPlateOctoDB.yOffset = num
+            QuestPlateOcto.yOffset = num
             print("|cff3399ffQuestPlateOcto|r: Icon Y-Offset set to |cffffff00" .. num .. "|r.")
         else
-            num = QuestPlateOctoDB.yOffset
+            num = QuestPlateOcto.yOffset
             print("|cff3399ffQuestPlateOcto|r: Usage: /qp y <number> (Current: " .. num .. ")")
         end
     else
-        local scale = QuestPlateOctoDB.iconSize
-        local xOffset = QuestPlateOctoDB.xOffset
-        local yOffset = QuestPlateOctoDB.yOffset
+        local scale = QuestPlateOcto.iconSize
+        local xOffset = QuestPlateOcto.xOffset
+        local yOffset = QuestPlateOcto.yOffset
         print("|cff3399ff--- QuestPlateOcto Commands ---|r")
         print("/qp scale " .. scale .. " - Sets the icon size (Default: 16).")
         print("/qp x " .. xOffset .. "  - Sets the horizontal offset (Default: 22).")
