@@ -1,5 +1,5 @@
 # QuestPlatesOcto
-Quest icons on mob nameplates. Should work with with custom nameplates.
+Quest progress on mob nameplates. Should work with with custom nameplates.
 
 <img width="384" height="207" alt="Screenshot_20260818_195833" src="https://github.com/user-attachments/assets/92b0074f-01a2-457a-856c-4a13a4d8820a" />
 <img width="384" height="207" alt="Screenshot_20260818_200021" src="https://github.com/user-attachments/assets/4f91637e-e3b7-4958-acc4-f8de548e339a" />
