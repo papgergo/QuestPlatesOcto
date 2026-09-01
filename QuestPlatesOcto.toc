@@ -4,4 +4,4 @@
 ## Version: 1.0.0
 ## Notes: Display quest progress on mob nameplates
 ## SavedVariables: QuestPlateOcto
-QuestPlateOcto.lua
+QuestPlatesOcto.lua
