@@ -14,11 +14,21 @@ local defaults = {
     yOffset = 14
 }
 
+-- BlizzardNameplatePlus
+local addonOffsetX = 0
+local addonOffsetY = 0
+
 local function ApplyDefaults()
     for k, v in pairs(defaults) do
         if QuestPlateOcto[k] == nil then
             QuestPlateOcto[k] = v
         end
+    end
+end
+
+local function ResetSettings()
+    for k, v in pairs(defaults) do
+        QuestPlateOcto[k] = v
     end
 end
 
@@ -247,6 +257,25 @@ local function GetMonsterDataFromPfDb(questId)
     return table.getn(pfMobs) > 0 and pfMobs or nil
 end
 
+local function IsMobMatchObjective(mobName, objName)
+    local lm = string.lower(mobName)
+    local lo = string.lower(string.gsub(objName, "%s*slain.*$", ""))
+    if lm == lo then
+        return true
+    end
+    local ls = string.gsub(lo, "s$", "")
+    if lm == ls then
+        return true
+    end
+    if string.find(lm, ls, 1, true) then
+        return true
+    end
+    if string.find(lo, lm, 1, true) then
+        return true
+    end
+    return false
+end
+
 function UpdateQuestObjectives()
     wipe(questObjectives)
 
@@ -262,6 +291,14 @@ function UpdateQuestObjectives()
         if not isHeader and not isComplete then
             local questId = GetQuestIdByTitle(questTitle, questLevel)
             local numObjectives = GetNumQuestLeaderBoards()
+
+            local numMonsterObjectives = 0
+            for j = 1, numObjectives do
+                local _, objType = GetQuestLogLeaderBoard(j)
+                if objType == "monster" then
+                    numMonsterObjectives = numMonsterObjectives + 1
+                end
+            end
 
             for j = 1, numObjectives do
                 local description, objectiveType = GetQuestLogLeaderBoard(j)
@@ -281,7 +318,26 @@ function UpdateQuestObjectives()
                             sources = GetMonsterDataFromPfDb(questId)
                         end
                         if sources then
-                            mobs = sources
+                            if numMonsterObjectives > 1 then
+                                local filtered = {}
+                                for _, mobName in pairs(sources) do
+                                    if IsMobMatchObjective(mobName, name) then
+                                        table.insert(filtered, mobName)
+                                    end
+                                end
+                                if table.getn(filtered) > 0 then
+                                    mobs = filtered
+                                else
+                                    local mobNameFallback = string.gsub(name, "%s+slain$", "")
+                                    if mobNameFallback and mobNameFallback ~= "" then
+                                        mobs = {mobNameFallback}
+                                    else
+                                        mobs = sources
+                                    end
+                                end
+                            else
+                                mobs = sources
+                            end
                             icon = "Interface\\AddOns\\QuestPlateOcto\\img\\kill"
                         else
                             -- Fallback: parse the name directly from the quest log text
@@ -382,6 +438,18 @@ local function GetNameplateDisplayName(nameplate)
 end
 
 local function GetNameplateHealthBar(nameplate)
+    -- Check for ShaguPlates and other custom nameplates
+    if nameplate.nameplate and nameplate.nameplate.health then
+        return nameplate.nameplate.health
+    end
+    if nameplate.healthbar then
+        return nameplate.healthbar
+    end
+    if nameplate.HealthBar then
+        return nameplate.HealthBar
+    end
+
+    -- Fallback to the default Blizzard StatusBar
     for i, child in ipairs({nameplate:GetChildren()}) do
         if child and child:GetObjectType() == "StatusBar" then
             return child
@@ -423,10 +491,23 @@ updater:SetScript("OnUpdate", function()
                             local icon = iconPool[iconIndex]
                             icon:ClearAllPoints()
                             if prevIcon then
-                                icon:SetPoint("RIGHT", prevIcon, "RIGHT", 25, 0)
+                                icon:SetParent(prevIcon:GetParent())
+                                icon:SetPoint("LEFT", prevIcon, "RIGHT", 5, 0)
                             else
-                                icon:SetPoint("RIGHT", healthBar, "RIGHT", QuestPlateOcto.xOffset,
-                                    QuestPlateOcto.yOffset)
+                                local currentXOffset = QuestPlateOcto.xOffset
+                                -- Offset if ShaguPlates or other castbar is shown to the right
+                                local castbar = frame.castbar or frame.castBar
+                                if frame.nameplate then
+                                    castbar = castbar or frame.nameplate.castbar or frame.nameplate.castBar
+                                end
+
+                                if castbar and castbar:IsShown() then
+                                    currentXOffset = currentXOffset + 20
+                                end
+
+                                icon:SetParent(healthBar)
+                                icon:SetPoint("LEFT", healthBar, "RIGHT", currentXOffset + addonOffsetX,
+                                    QuestPlateOcto.yOffset + addonOffsetY)
                             end
                             icon.texture:SetTexture(objectiveData.icon)
                             icon.text:SetText(objectiveData.text)
@@ -492,6 +573,18 @@ dependencyChecker:SetScript("OnEvent", function()
                 print(
                     "|cff3399ffQuestPlateOcto|r: Neither |cffffff00Questie-octo|r nor |cffffff00pfQuest|r is enabled. This addon requires one of them to function.")
             end
+
+            if BNP then
+                addonOffsetX = -12
+                addonOffsetY = -21
+                print("|cff3399ffQuestPlateOcto|r: |cffffff00BlizzardNameplatePlus|r detected.")
+            end
+
+            if ShaguPlates then
+                addonOffsetX = -20
+                addonOffsetY = -19
+                print("|cff3399ffQuestPlateOcto|r: |cffffff00BlizzardNameplatePlus|r detected.")
+            end
         end
     end)
 end)
@@ -531,6 +624,9 @@ SlashCmdList["QUESTPLATEOCTO"] = function(msg)
             num = QuestPlateOcto.yOffset
             print("|cff3399ffQuestPlateOcto|r: Usage: /qp y <number> (Current: " .. num .. ")")
         end
+    elseif command == "reset" then
+        ResetSettings()
+        print("|cff3399ffQuestPlateOcto|r: Settings has been reset")
     else
         local scale = QuestPlateOcto.iconSize
         local xOffset = QuestPlateOcto.xOffset
@@ -539,5 +635,6 @@ SlashCmdList["QUESTPLATEOCTO"] = function(msg)
         print("/qp scale " .. scale .. " - Sets the icon size (Default: 16).")
         print("/qp x " .. xOffset .. "  - Sets the horizontal offset (Default: 22).")
         print("/qp y " .. yOffset .. "  - Sets the vertical offset (Default: 14).")
+        print("/qp reset - Reset the settings to default.")
     end
 end
