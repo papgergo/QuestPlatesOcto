@@ -338,13 +338,13 @@ function UpdateQuestObjectives()
                             else
                                 mobs = sources
                             end
-                            icon = "Interface\\AddOns\\QuestPlateOcto\\img\\kill"
+                            icon = "Interface\\AddOns\\QuestPlatesOcto\\img\\kill"
                         else
                             -- Fallback: parse the name directly from the quest log text
                             local mobName = string.gsub(name, "%s+slain$", "")
                             if mobName and mobName ~= "" then
                                 mobs = {mobName}
-                                icon = "Interface\\AddOns\\QuestPlateOcto\\img\\kill"
+                                icon = "Interface\\AddOns\\QuestPlatesOcto\\img\\kill"
                             end
                         end
                     elseif objectiveType == "item" and questId then
@@ -583,7 +583,7 @@ dependencyChecker:SetScript("OnEvent", function()
             if ShaguPlates then
                 addonOffsetX = -20
                 addonOffsetY = -19
-                print("|cff3399ffQuestPlateOcto|r: |cffffff00BlizzardNameplatePlus|r detected.")
+                print("|cff3399ffQuestPlateOcto|r: |cffffff00ShaguPlates|r detected.")
             end
         end
     end)
