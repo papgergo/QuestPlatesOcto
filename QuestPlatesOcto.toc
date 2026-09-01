@@ -1,7 +1,7 @@
-## Title: QuestPlateOcto
+## Title: QuestPlatesOcto
 ## Interface: 11200
 ## Author: Rajmee
 ## Version: 1.0.0
 ## Notes: Display quest progress on mob nameplates
-## SavedVariables: QuestPlateOcto
+## SavedVariables: QuestPlatesOcto
 QuestPlatesOcto.lua
