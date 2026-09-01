@@ -352,7 +352,7 @@ function UpdateQuestObjectives()
                         if sources then
                             mobs = sources
                         end
-                        icon = "Interface\\AddOns\\QuestPlateOcto\\img\\item"
+                        icon = "Interface\\AddOns\\QuestPlatesOcto\\img\\item"
                     end
 
                     for _, mobName in pairs(mobs) do
