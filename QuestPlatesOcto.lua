@@ -7,7 +7,7 @@ local questObjectives = {}
 local iconPool = {}
 
 -- Saved Settings
-QuestPlateOcto = QuestPlateOcto or {}
+QuestPlatesOcto = QuestPlatesOcto or {}
 local defaults = {
     iconSize = 16,
     xOffset = 22,
@@ -19,16 +19,19 @@ local addonOffsetX = 0
 local addonOffsetY = 0
 
 local function ApplyDefaults()
+    if QuestPlatesOcto == nil then
+        QuestPlatesOcto = {}
+    end
     for k, v in pairs(defaults) do
-        if QuestPlateOcto[k] == nil then
-            QuestPlateOcto[k] = v
+        if QuestPlatesOcto[k] == nil then
+            QuestPlatesOcto[k] = v
         end
     end
 end
 
 local function ResetSettings()
     for k, v in pairs(defaults) do
-        QuestPlateOcto[k] = v
+        QuestPlatesOcto[k] = v
     end
 end
 
@@ -376,7 +379,7 @@ end
 local function CreateIconPool()
     for i = 1, MAX_ICONS do
         local iconFrame = CreateFrame("Frame", nil, f)
-        iconFrame:SetSize(QuestPlateOcto.iconSize, QuestPlateOcto.iconSize)
+        iconFrame:SetSize(QuestPlatesOcto.iconSize, QuestPlatesOcto.iconSize)
         local texture = iconFrame:CreateTexture(nil, "ARTWORK")
         texture:SetAllPoints(iconFrame)
         iconFrame.texture = texture
@@ -391,7 +394,7 @@ end
 
 local function UpdateIconAppearance()
     for _, icon in pairs(iconPool) do
-        icon:SetSize(QuestPlateOcto.iconSize, QuestPlateOcto.iconSize)
+        icon:SetSize(QuestPlatesOcto.iconSize, QuestPlatesOcto.iconSize)
     end
     -- Force a redraw of nameplates
     if updater then
@@ -494,7 +497,7 @@ updater:SetScript("OnUpdate", function()
                                 icon:SetParent(prevIcon:GetParent())
                                 icon:SetPoint("LEFT", prevIcon, "RIGHT", 5, 0)
                             else
-                                local currentXOffset = QuestPlateOcto.xOffset
+                                local currentXOffset = QuestPlatesOcto.xOffset
                                 -- Offset if ShaguPlates or other castbar is shown to the right
                                 local castbar = frame.castbar or frame.castBar
                                 if frame.nameplate then
@@ -507,7 +510,7 @@ updater:SetScript("OnUpdate", function()
 
                                 icon:SetParent(healthBar)
                                 icon:SetPoint("LEFT", healthBar, "RIGHT", currentXOffset + addonOffsetX,
-                                    QuestPlateOcto.yOffset + addonOffsetY)
+                                    QuestPlatesOcto.yOffset + addonOffsetY)
                             end
                             icon.texture:SetTexture(objectiveData.icon)
                             icon.text:SetText(objectiveData.text)
@@ -571,19 +574,19 @@ dependencyChecker:SetScript("OnEvent", function()
             local questieReady = QuestieOcto and QuestieOcto.DatabaseAPI and QuestieOcto.DatabaseAPI:IsReady()
             if not pfDB and not questieReady then
                 print(
-                    "|cff3399ffQuestPlateOcto|r: Neither |cffffff00Questie-octo|r nor |cffffff00pfQuest|r is enabled. This addon requires one of them to function.")
+                    "|cff3399ffQuestPlatesOcto|r: Neither |cffffff00Questie-octo|r nor |cffffff00pfQuest|r is enabled. This addon requires one of them to function.")
             end
 
             if BNP then
                 addonOffsetX = -12
                 addonOffsetY = -21
-                print("|cff3399ffQuestPlateOcto|r: |cffffff00BlizzardNameplatePlus|r detected.")
+                print("|cff3399ffQuestPlatesOcto|r: |cffffff00BlizzardNameplatePlus|r detected.")
             end
 
             if ShaguPlates then
                 addonOffsetX = -20
                 addonOffsetY = -19
-                print("|cff3399ffQuestPlateOcto|r: |cffffff00ShaguPlates|r detected.")
+                print("|cff3399ffQuestPlatesOcto|r: |cffffff00ShaguPlates|r detected.")
             end
         end
     end)
@@ -599,39 +602,39 @@ SlashCmdList["QUESTPLATEOCTO"] = function(msg)
     if command == "scale" or command == "size" then
         local num = tonumber(value)
         if num and num > 4 and num < 64 then
-            QuestPlateOcto.iconSize = num
-            print("|cff3399ffQuestPlateOcto|r: Icon size set to |cffffff00" .. num .. "|r.")
+            QuestPlatesOcto.iconSize = num
+            print("|cff3399ffQuestPlatesOcto|r: Icon size set to |cffffff00" .. num .. "|r.")
             UpdateIconAppearance()
         else
-            num = QuestPlateOcto.iconSize
-            print("|cff3399ffQuestPlateOcto|r: Usage: /qp scale <number> (Current: " .. num .. ")")
+            num = QuestPlatesOcto.iconSize
+            print("|cff3399ffQuestPlatesOcto|r: Usage: /qp scale <number> (Current: " .. num .. ")")
         end
     elseif command == "x" then
         local num = tonumber(value)
         if num then
-            QuestPlateOcto.xOffset = num
-            print("|cff3399ffQuestPlateOcto|r: Icon X-Offset set to |cffffff00" .. num .. "|r.")
+            QuestPlatesOcto.xOffset = num
+            print("|cff3399ffQuestPlatesOcto|r: Icon X-Offset set to |cffffff00" .. num .. "|r.")
         else
-            num = QuestPlateOcto.xOffset
-            print("|cff3399ffQuestPlateOcto|r: Usage: /qp x <number> (Current: " .. num .. ")")
+            num = QuestPlatesOcto.xOffset
+            print("|cff3399ffQuestPlatesOcto|r: Usage: /qp x <number> (Current: " .. num .. ")")
         end
     elseif command == "y" then
         local num = tonumber(value)
         if num then
-            QuestPlateOcto.yOffset = num
-            print("|cff3399ffQuestPlateOcto|r: Icon Y-Offset set to |cffffff00" .. num .. "|r.")
+            QuestPlatesOcto.yOffset = num
+            print("|cff3399ffQuestPlatesOcto|r: Icon Y-Offset set to |cffffff00" .. num .. "|r.")
         else
-            num = QuestPlateOcto.yOffset
-            print("|cff3399ffQuestPlateOcto|r: Usage: /qp y <number> (Current: " .. num .. ")")
+            num = QuestPlatesOcto.yOffset
+            print("|cff3399ffQuestPlatesOcto|r: Usage: /qp y <number> (Current: " .. num .. ")")
         end
     elseif command == "reset" then
         ResetSettings()
-        print("|cff3399ffQuestPlateOcto|r: Settings has been reset")
+        print("|cff3399ffQuestPlatesOcto|r: Settings has been reset")
     else
-        local scale = QuestPlateOcto.iconSize
-        local xOffset = QuestPlateOcto.xOffset
-        local yOffset = QuestPlateOcto.yOffset
-        print("|cff3399ff--- QuestPlateOcto Commands ---|r")
+        local scale = QuestPlatesOcto.iconSize
+        local xOffset = QuestPlatesOcto.xOffset
+        local yOffset = QuestPlatesOcto.yOffset
+        print("|cff3399ff--- QuestPlatesOcto Commands ---|r")
         print("/qp scale " .. scale .. " - Sets the icon size (Default: 16).")
         print("/qp x " .. xOffset .. "  - Sets the horizontal offset (Default: 22).")
         print("/qp y " .. yOffset .. "  - Sets the vertical offset (Default: 14).")
