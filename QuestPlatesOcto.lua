@@ -475,8 +475,8 @@ updater:SetScript("OnUpdate", function()
     end
 
     local iconIndex = 1
-    for i = 1, WorldFrame:GetNumChildren() do
-        local frame = select(i, WorldFrame:GetChildren())
+    local children = {WorldFrame:GetChildren()}
+    for _, frame in ipairs(children) do
         if frame and frame:IsShown() then
             local unitName = GetNameplateDisplayName(frame)
             local healthBar = GetNameplateHealthBar(frame)
